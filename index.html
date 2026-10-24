@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кулинарная карта Кызылординской области</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            gold: '#D4AF37',
+                            darkGold: '#AA820A',
+                            sand: '#F4EAD3',
+                            terracotta: '#C85A32',
+                            teal: '#1B4D3E',
+                            darkTeal: '#0F2E25',
+                            cream: '#FAF7F2',
+                            cardBg: '#FFFFFF',
+                            textDark: '#2C221E'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        hand: ['Caveat', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF7F2;
+            color: #2C221E;
+        }
+        
+        .ornament-border {
+            background-image: radial-gradient(#D4AF37 0.75px, transparent 0.75px);
+            background-size: 12px 12px;
+        }
+
+        .region-path {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .region-path:hover {
+            fill: #C85A32 !important;
+            filter: drop-shadow(0px 8px 12px rgba(200, 90, 50, 0.4));
+            transform: translateY(-2px);
+        }
+
+        .region-path.active {
+            fill: #D4AF37 !important;
+            stroke: #1B4D3E !important;
+            stroke-width: 3px;
+            filter: drop-shadow(0px 8px 16px rgba(212, 175, 55, 0.6));
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F4EAD3;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #C85A32;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .dish-card {
+            transition: all 0.3s ease;
+        }
+        .dish-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(27, 77, 62, 0.15);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Header / Navbar -->
+    <header class="bg-brand-darkTeal text-white sticky top-0 z-50 shadow-md border-b-2 border-brand-gold">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetFilters()">
+                <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-darkTeal font-bold text-xl shadow-lg border border-white">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif font-bold text-lg sm:text-xl md:text-2xl text-brand-gold tracking-wide leading-tight">
+                        Дәмді Қызылорда
+                    </h1>
+                    <p class="text-xs text-stone-300 hidden sm:block">Гастрономическая карта Кызылординской области</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button onclick="resetFilters()" class="text-xs sm:text-sm bg-brand-teal hover:bg-brand-gold hover:text-brand-darkTeal text-stone-200 px-3 py-2 rounded-lg transition duration-200 flex items-center gap-2 border border-brand-gold/30">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Сбросить всё</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-brand-teal text-white py-8 px-4 sm:px-8 border-b border-brand-gold/20 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 ornament-border pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto text-center relative z-10">
+            <span class="inline-block px-3 py-1 bg-brand-gold/20 text-brand-gold rounded-full text-xs font-semibold tracking-wider uppercase mb-2 border border-brand-gold/30">Традиции & Гастрономия</span>
+            <h2 class="font-serif text-2xl sm:text-4xl font-bold mb-3 text-brand-sand">Вкусы Приаралья и Великого Шёлкового Пути</h2>
+            <p class="max-w-2xl mx-auto text-sm sm:text-base text-stone-200 leading-relaxed font-light">
+                Нажмите на район на интерактивной карте или выберите категорию, чтобы исследовать аутентичные рецепты, секреты кулинарии и гастрономическую культуру Сырдарьинского региона.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        
+        <!-- Controls: Filters & Search -->
+        <div class="mb-8 flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
+            <!-- Search -->
+            <div class="relative w-full md:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Поиск блюда или ингредиента..." class="w-full pl-10 pr-4 py-2 border border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent bg-stone-50">
+            </div>
+
+            <!-- Categories -->
+            <div class="flex flex-wrap gap-2 w-full md:w-auto justify-center md:justify-end" id="categoryButtons">
+                <!-- JS Populated -->
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- MAP CONTAINER (5 Cols on large screens) -->
+            <div class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-md border border-stone-200 sticky top-24">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-serif font-bold text-lg text-brand-darkTeal flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot text-brand-terracotta"></i>
+                        Карта районов
+                    </h3>
+                    <span id="selectedRegionLabel" class="text-xs font-semibold text-brand-terracotta bg-brand-sand/50 px-2.5 py-1 rounded-md border border-brand-gold/30">
+                        Все районы
+                    </span>
+                </div>
+
+                <div class="relative w-full aspect-[4/5] bg-stone-50 rounded-xl border border-stone-200 p-2 flex items-center justify-center overflow-hidden">
+                    <!-- SVG MAP OF KYZYLORDA REGION -->
+                    <svg viewBox="0 0 500 650" class="w-full h-full drop-shadow-md select-none">
+                        <defs>
+                            <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.3"/>
+                                <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.6"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Aral Sea Representation -->
+                        <path d="M 60 180 C 40 220, 50 280, 80 320 C 100 300, 90 240, 70 210 Z" fill="url(#waterGrad)" stroke="#2563EB" stroke-width="1" stroke-dasharray="3 3"/>
+                        <text x="65" y="260" font-size="10" fill="#1E40AF" font-family="Montserrat" font-style="italic" opacity="0.8">Арал теңізі</text>
+
+                        <!-- Syr Darya River Line -->
+                        <path d="M 80 200 Q 150 250, 220 320 T 320 420 T 420 580" fill="none" stroke="#60A5FA" stroke-width="3" opacity="0.7"/>
+                        <text x="270" y="360" font-size="9" fill="#1D4ED8" font-family="Montserrat" font-style="italic" transform="rotate(35, 270, 360)">Сырдария өзені</text>
+
+                        <!-- REGIONS (Paths optimized for representation) -->
+                        
+                        <!-- 1. Aralsk Region -->
+                        <g class="region-group" data-region="aralsk">
+                            <path class="region-path fill-[#E6D7BC] stroke-white stroke-2" d="M 30 120 L 120 70 L 180 130 L 150 240 L 90 310 L 30 220 Z"/>
+                            <text x="100" y="170" font-size="11" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Аральский</text>
+                        </g>
+
+                        <!-- 2. Kazalinsk Region -->
+                        <g class="region-group" data-region="kazalinsk">
+                            <path class="region-path fill-[#DFCEB0] stroke-white stroke-2" d="M 150 240 L 220 180 L 250 250 L 190 320 L 90 310 Z"/>
+                            <text x="175" y="270" font-size="11" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Казалинский</text>
+                        </g>
+
+                        <!-- 3. Karmakshy Region (includes Baikonur area) -->
+                        <g class="region-group" data-region="karmakshy">
+                            <path class="region-path fill-[#D7C3A2] stroke-white stroke-2" d="M 180 130 L 300 100 L 290 230 L 250 250 L 220 180 Z"/>
+                            <text x="235" y="180" font-size="11" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Кармашинский</text>
+                        </g>
+
+                        <!-- 4. Jalagash Region -->
+                        <g class="region-group" data-region="jalagash">
+                            <path class="region-path fill-[#CFC098] stroke-white stroke-2" d="M 300 100 L 370 120 L 340 270 L 290 230 Z"/>
+                            <text x="325" y="190" font-size="11" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Жалагашский</text>
+                        </g>
+
+                        <!-- 5. Syrdariya Region -->
+                        <g class="region-group" data-region="syrdariya">
+                            <path class="region-path fill-[#E2D1B3] stroke-white stroke-2" d="M 370 120 L 440 150 L 380 320 L 340 270 Z"/>
+                            <text x="380" y="220" font-size="10" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Сырдарьинский</text>
+                        </g>
+
+                        <!-- 6. Kyzylorda City -->
+                        <g class="region-group" data-region="kyzylorda">
+                            <circle class="region-path fill-[#C85A32] stroke-white stroke-2" cx="350" cy="310" r="18"/>
+                            <text x="350" y="314" font-size="9" font-weight="bold" fill="#FFFFFF" text-anchor="middle" pointer-events="none">г. Ақмешіт</text>
+                        </g>
+
+                        <!-- 7. Shieli Region -->
+                        <g class="region-group" data-region="shieli">
+                            <path class="region-path fill-[#D8C7A7] stroke-white stroke-2" d="M 340 270 L 380 320 L 430 430 L 330 440 L 290 350 Z"/>
+                            <text x="360" y="380" font-size="11" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Шиелийский</text>
+                        </g>
+
+                        <!-- 8. Zhanakorgan Region -->
+                        <g class="region-group" data-region="zhanakorgan">
+                            <path class="region-path fill-[#CBB793] stroke-white stroke-2" d="M 330 440 L 430 430 L 460 580 L 350 560 Z"/>
+                            <text x="390" y="500" font-size="11" font-weight="bold" fill="#2C221E" text-anchor="middle" pointer-events="none">Жанакорганский</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <p class="text-xs text-stone-500 mt-3 text-center flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-hand-pointer text-brand-gold"></i> Нажмите на любой район для фильтрации блюд
+                </p>
+            </div>
+
+            <!-- DISHES LIST CONTAINER (7 Cols on large screens) -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <div class="flex justify-between items-center">
+                    <h3 class="font-serif font-bold text-xl text-brand-darkTeal">
+                        Национальные и региональные блюда 
+                        <span id="dishesCount" class="text-sm font-sans font-normal text-stone-500"></span>
+                    </h3>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden bg-white p-8 rounded-2xl text-center border border-stone-200">
+                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-brand-sand flex items-center justify-center text-brand-terracotta text-2xl">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <h4 class="font-serif font-bold text-lg text-stone-800">Блюда не найдены</h4>
+                    <p class="text-stone-500 text-sm mt-1">Попробуйте изменить параметры поиска или выбрать другой район.</p>
+                    <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-brand-gold text-brand-darkTeal font-semibold rounded-lg text-xs hover:bg-brand-darkGold transition">
+                        Сбросить фильтры
+                    </button>
+                </div>
+
+                <!-- Dishes Grid -->
+                <div id="dishesList" class="space-y-6">
+                    <!-- JS Populated Cards -->
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Dish Modal -->
+    <div id="dishModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-brand-gold/30 relative flex flex-col">
+            
+            <!-- Modal Header / Image -->
+            <div class="relative h-64 sm:h-72 bg-stone-200 flex-shrink-0">
+                <img id="modalImg" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-white/80 hover:bg-white text-stone-800 w-9 h-9 rounded-full flex items-center justify-center shadow-lg transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+                <div class="absolute bottom-4 left-6 right-6 text-white">
+                    <span id="modalCategory" class="text-xs font-semibold px-2.5 py-1 bg-brand-gold text-brand-darkTeal rounded-md tracking-wider uppercase mb-2 inline-block"></span>
+                    <h3 id="modalTitle" class="font-serif text-2xl sm:text-3xl font-bold text-white"></h3>
+                    <p id="modalRegion" class="text-xs sm:text-sm text-stone-200 flex items-center gap-1.5 mt-1">
+                        <i class="fa-solid fa-location-dot text-brand-gold"></i> <span></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-6 flex-grow">
+                
+                <!-- Description -->
+                <div>
+                    <h4 class="font-serif font-bold text-lg text-brand-darkTeal mb-2">Описание & История</h4>
+                    <p id="modalDescription" class="text-stone-600 text-sm leading-relaxed"></p>
+                </div>
+
+                <!-- Nutrition -->
+                <div class="bg-brand-sand/30 p-4 rounded-xl border border-brand-gold/20">
+                    <h4 class="font-serif font-bold text-sm text-brand-darkTeal mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-brand-terracotta"></i> Пищевая ценность (на 100g)
+                    </h4>
+                    <div class="grid grid-cols-4 gap-2 text-center text-xs">
+                        <div class="bg-white p-2 rounded-lg border border-stone-200">
+                            <span class="block text-stone-400 font-medium">Ккал</span>
+                            <span id="modalKcal" class="font-bold text-stone-800"></span>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-stone-200">
+                            <span class="block text-stone-400 font-medium">Белки</span>
+                            <span id="modalProteins" class="font-bold text-stone-800"></span>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-stone-200">
+                            <span class="block text-stone-400 font-medium">Жиры</span>
+                            <span id="modalFats" class="font-bold text-stone-800"></span>
+                        </div>
+                        <div class="bg-white p-2 rounded-lg border border-stone-200">
+                            <span class="block text-stone-400 font-medium">Углеводы</span>
+                            <span id="modalCarbs" class="font-bold text-stone-800"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredients -->
+                <div>
+                    <h4 class="font-serif font-bold text-lg text-brand-darkTeal mb-2">Ингредиенты</h4>
+                    <ul id="modalIngredients" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-stone-700">
+                        <!-- JS populated -->
+                    </ul>
+                </div>
+
+                <!-- Recipe Steps -->
+                <div>
+                    <h4 class="font-serif font-bold text-lg text-brand-darkTeal mb-2">Способ приготовления</h4>
+                    <ol id="modalSteps" class="space-y-2 text-sm text-stone-700 list-decimal list-inside">
+                        <!-- JS populated -->
+                    </ol>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-stone-50 border-t border-stone-200 rounded-b-2xl flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2 bg-stone-800 text-white rounded-lg text-sm font-medium hover:bg-stone-700 transition">
+                    Закрыть
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-brand-darkTeal text-stone-300 py-6 border-t-2 border-brand-gold mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs space-y-2">
+            <p class="font-serif text-brand-gold text-sm font-semibold">Гастрономическое наследие Сырдарьинского региона</p>
+            <p>Кызылординская область • Аралье • Казалинск • Байконур • Шиели • Жанакорган</p>
+            <p class="text-stone-500">© 2026 Все права защищены. Интерактивный путеводитель.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        // Database of Dishes
+        const dishes = [
+            {
+                id: 'balyk-sorpa',
+                name: 'Арал балық сорпасы',
+                category: 'soups',
+                regionId: 'aralsk',
+                regionName: 'Аральский район',
+                shortDesc: 'Аутентичная уха из свежевыловленной аральской камбалы или сазана с прозрачным наваристым бульоном.',
+                fullDesc: 'Рыбный бульон (балық сорпа) — главное традиционное блюдо жителей побережья Аральского моря. Для настоящего аральского рецепта используется свежая крупная рыба, а бульон приправляется сушеным куртом для придания легкой кислинки и пикантности.',
+                img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80',
+                kcal: '120',
+                proteins: '18г',
+                fats: '4г',
+                carbs: '2г',
+                ingredients: ['Сазан или Аральская камбала (1 кг)', 'Вода (2.5 л)', 'Картофель (3 шт)', 'Лук репчатый (2 шт)', 'Курт сушеный (2-3 шт)', 'Черный перец, соль, зелень'],
+                steps: [
+                    'Рыбу очистить, нарезать крупными кусками.',
+                    'В кипящую воду положить целиком одну луковицу и картофель.',
+                    'Через 15 минут добавить куски рыбы и варка на медленном огне 15-20 минут.',
+                    'За 5 минут до готовности добавить пассерованный второй лук, соль, перец.',
+                    'При подаче в пиалу с сорпой накрошить сушеный курт.'
+                ]
+            },
+            {
+                id: 'kazaly-kurt',
+                name: 'Қазалы құрты',
+                category: 'snacks',
+                regionId: 'kazalinsk',
+                regionName: 'Казалинский район',
+                shortDesc: 'Знаменитый казалинский соленый курт — твердый, питательный кисломолочный продукт с уникальным вкусом.',
+                fullDesc: 'Казалинский курт известность получил благодаря особому качеству местного молока и традиционным методам сушки на солнце. Это не просто лакомство, но и незаменимый источник кальция и белков для кочевников.',
+                img: 'https://images.unsplash.com/photo-1559561853-08451507cbe7?auto=format&fit=crop&w=800&q=80',
+                kcal: '280',
+                proteins: '26г',
+                fats: '12г',
+                carbs: '8г',
+                ingredients: ['Овечье или коровье молоко (5 л)', 'Закваска (айран)', 'Соль по вкусу'],
+                steps: [
+                    'Сквасить молоко для получения сузбе (отжатого айрана).',
+                    'Густую массу тщательно выжать через марлю от сыворотки.',
+                    'Добавить соль и скатать небольшие шарики или цилиндрики.',
+                    'Выложить на деревянные подносы и сушить на солнце 3-5 дней.'
+                ]
+            },
+            {
+                id: 'shieli-kurish-koje',
+                name: 'Шиелі күріш көжесі',
+                category: 'soups',
+                regionId: 'shieli',
+                regionName: 'Шиелийский район',
+                shortDesc: 'Густой молочно-рисный суп с добавлением мяса и катыка на основе местного шиелийского риса.',
+                fullDesc: 'Шиели — рисовая житница Кызылординской области. Местный рис славится высокой крахмалистостью. Суп күріш көже готовят во время весенних полевых работ и праздников, он отлично утоляет жажду и дает силы.',
+                img: 'https://images.unsplash.com/photo-1511910849309-0dcdb8f87e46?auto=format&fit=crop&w=800&q=80',
+                kcal: '190',
+                proteins: '9г',
+                fats: '6г',
+                carbs: '25г',
+                ingredients: ['Местный рис Шиели (1 стакан)', 'Мясной бульон с мякотью баранины (1.5 л)', 'Катык или айран (1 стакан)', 'Зелень, соль'],
+                steps: [
+                    'Отварить баранину до готовности, вынуть и нарезать кубиками.',
+                    'В кипящий бульон засыпать промытый рис и варить до мягкости.',
+                    'Влить заправку из катыка, помешивая, чтобы суп не свернулся.',
+                    'Подавать с нарезанным мясом и зеленью.'
+                ]
+            },
+            {
+                id: 'syrne',
+                name: 'Сырдарья сырнесі',
+                category: 'main',
+                regionId: 'syrdariya',
+                regionName: 'Сырдарьинский район',
+                shortDesc: 'Нежнейшее тушеное мясо молочного ягненка, томленое в собственном соку в казане.',
+                fullDesc: 'Сырне — праздничное блюдо. Мясо ягненка укладывается в казан плотными слоями и томится на очень медленном огне несколько часов без добавления воды. Мясо получается настолько мягким, что отходит от костей.',
+                img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
+                kcal: '320',
+                proteins: '22г',
+                fats: '25г',
+                carbs: '2г',
+                ingredients: ['Баранина / ягнятина (2 кг)', 'Курдючный жир (200 г)', 'Репчатый лук (1 кг)', 'Соль, кумин (зира), черный перец'],
+                steps: [
+                    'Дно казана выложить ломтиками курдюка.',
+                    'Плотно уложить крупные куски баранины, пересыпая солью, специями и нашинкованным луком.',
+                    'Плотно закрыть крышкой (можно обмазать тестом края).',
+                    'Томить на минимальном огне 2.5 - 3 часа.'
+                ]
+            },
+            {
+                id: 'zhanakorgan-sokpa',
+                name: 'Жаңақорған қортпасы',
+                category: 'mains',
+                regionId: 'zhanakorgan',
+                regionName: 'Жанакорганский район',
+                shortDesc: 'Густое питательное блюдо из сушеного мяса (сүр ет) и домашней лапши.',
+                fullDesc: 'Жанакорган расположен на юге области рядом с горами Каратау. Здесь сохранился древний рецепт приготовления заготовленного на зиму сушеного мяса с вяленым курдюком и вручную раскатанным тестом.',
+                img: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80',
+                kcal: '410',
+                proteins: '28г',
+                fats: '22г',
+                carbs: '30г',
+                ingredients: ['Сушеное мясо сүр ет (800 г)', 'Мука пшеничная (400 г)', 'Яйцо (1 шт)', 'Лук (2 шт)', 'Черный перец'],
+                steps: [
+                    'Сушеное мясо вымочить в холодной воде 1 час, затем отварить до мягкости.',
+                    'Замесить тугое тесто из муки, яйца и воды, тонко раскатать и нарезать крупными квадратами.',
+                    'Отварить сочни теста в мясном бульоне.',
+                    'Выложить тесто на блюдо, сверху уложить нарезанное мясо и залить соусом из лука и бульона (тұздық).'
+                ]
+            },
+            {
+                id: 'katyrma-bread',
+                name: 'Қармақшы қатырмасы',
+                category: 'desserts',
+                regionId: 'karmakshy',
+                regionName: 'Кармашинский район',
+                shortDesc: 'Традиционные тонкие хрустящие лепёшки, обжаренные на сухом казане.',
+                fullDesc: 'Қатырма — быстрая в приготовлении лепёшка, которую чабаны и жившие в степи казахи готовили за считанные минуты. В Кармашинском районе их подают горячими с домашним сливочным маслом или майеке (топленым маслом).',
+                img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80',
+                kcal: '260',
+                proteins: '7г',
+                fats: '5г',
+                carbs: '48г',
+                ingredients: ['Мука (500 г)', 'Вода (250 мл)', 'Соль (1 ч.л.)', 'Сливочное масло для смазывания'],
+                steps: [
+                    'Замесить пресное плотное тесто из муки, воды и соли. Дать отдохнуть 20 минут.',
+                    'Разделить на небольшие шарики и тонко раскатать круглые лепёшки.',
+                    'Выпекать на сухой сухой раскаленной сковороде или казане по 1-2 минуты с каждой стороны.',
+                    'Горячую лепёшку обильно смазать сливочным маслом.'
+                ]
+            },
+            {
+                id: 'akmeshshit-plov',
+                name: 'Ақмешіт күріш палауы',
+                category: 'main',
+                regionId: 'kyzylorda',
+                regionName: 'г. Кызылорда (Ақмешіт)',
+                shortDesc: 'Особый кызылординский плов из элитного местного сорта риса "Маржан" с кониной и казы.',
+                fullDesc: 'Кызылорда славится своими мастерами плова (палаушы). Особенность местного плова заключается в использовании круглозерного риса местной селекции, который идеально впитывает аромат баранины и казы, оставаясь рассыпчатым.',
+                img: 'https://images.unsplash.com/photo-1633964913295-ceb43826e7c9?auto=format&fit=crop&w=800&q=80',
+                kcal: '380',
+                proteins: '19г',
+                fats: '18г',
+                carbs: '38г',
+                ingredients: ['Рис "Маржан" или "Лазурный" (1 кг)', 'Мясо (конина/баранина) (1 кг)', 'Казы (300 г)', 'Морковь желтая и красная (1 кг)', 'Лук (300 г)', 'Масло растительное (250 мл)', 'Зира, барбарис, чеснок'],
+                steps: [
+                    'Раскалить масло в казане, обжарить лук до золотистого цвета.',
+                    'Добавить крупные куски мяса и казы, обжарить до корочки.',
+                    'Засыпать морковь соломкой, тушить 15 минут (зивак). Добавить специи и воду.',
+                    'Выложить промытый рис ровным слоем, залить кипятком на 1 см выше уровня риса.',
+                    'Когда вода испарится, собрать рис горкой, закрыть и томить на малом огне 25 минут.'
+                ]
+            },
+            {
+                id: 'zhalagash-zhent',
+                name: 'Жалағаш женті',
+                category: 'desserts',
+                regionId: 'jalagash',
+                regionName: 'Жалагашский район',
+                shortDesc: 'Сладкий национальный десерт из обжаренного талкана, майеке, сахара и изюма.',
+                fullDesc: 'Женет — традиционное казахское лакомство, которое готовится по особому поводу. В Жалагашском районе в жент добавляют толченый сушеный курт и мед, что создает изысканный контраст сладкого и соленого.',
+                img: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=800&q=80',
+                kcal: '420',
+                proteins: '8г',
+                fats: '18г',
+                carbs: '55г',
+                ingredients: ['Талкан (обжаренная пшеница/просо) (500 г)', 'Топленое масло (200 г)', 'Сахар или мед (150 г)', 'Изюм, орехи (100 г)', 'Толченый курт (2 ст.л.)'],
+                steps: [
+                    'Растопить топленое масло с сахаром или медом.',
+                    'В глубокой посуде смешать талкан, изюм и немного курта.',
+                    'Влить горячее масло в сухую смесь и тщательно перемешать.',
+                    'Выложить в форму, утрамбовать и дать остыть в прохладном месте.'
+                ]
+            }
+        ];
+
+        // Categories Configuration
+        const categories = [
+            { id: 'all', label: 'Все категории', icon: 'fa-border-all' },
+            { id: 'main', label: 'Главные блюда', icon: 'fa-drumstick-bite' },
+            { id: 'soups', label: 'Первые блюда', icon: 'fa-bowl-rice' },
+            { id: 'snacks', label: 'Закуски & Заготовки', icon: 'fa-cheese' },
+            { id: 'desserts', label: 'Десерты & Выпечка', icon: 'fa-cookie' }
+        ];
+
+        // State Management
+        let selectedRegion = 'all';
+        let selectedCategory = 'all';
+        let searchQuery = '';
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCategoryButtons();
+            renderDishes();
+            setupMapEvents();
+        });
+
+        // Render Category Filter Buttons
+        function renderCategoryButtons() {
+            const container = document.getElementById('categoryButtons');
+            container.innerHTML = categories.map(cat => `
+                <button 
+                    onclick="setCategory('${cat.id}')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 ${
+                        selectedCategory === cat.id 
+                        ? 'bg-brand-darkTeal text-white shadow-md' 
+                        : 'bg-stone-100 hover:bg-stone-200 text-stone-700'
+                    }"
+                >
+                    <i class="fa-solid ${cat.icon} text-brand-gold"></i>
+                    <span>${cat.label}</span>
+                </button>
+            `).join('');
+        }
+
+        // Setup Map Hover & Click Events
+        function setupMapEvents() {
+            const regionGroups = document.querySelectorAll('.region-group');
+            
+            regionGroups.forEach(group => {
+                const regionId = group.getAttribute('data-region');
+                const path = group.querySelector('.region-path');
+
+                group.addEventListener('click', () => {
+                    if (selectedRegion === regionId) {
+                        setRegion('all');
+                    } else {
+                        setRegion(regionId);
+                    }
+                });
+            });
+        }
+
+        // Set Active Region
+        function setRegion(regionId) {
+            selectedRegion = regionId;
+            
+            // Update map SVG active styles
+            document.querySelectorAll('.region-path').forEach(p => p.classList.remove('active'));
+            
+            if (regionId !== 'all') {
+                const activeGroup = document.querySelector(`.region-group[data-region="${regionId}"]`);
+                if (activeGroup) {
+                    const activePath = activeGroup.querySelector('.region-path');
+                    if (activePath) activePath.classList.add('active');
+                }
+            }
+
+            // Update Label
+            const label = document.getElementById('selectedRegionLabel');
+            if (regionId === 'all') {
+                label.innerText = 'Все районы';
+            } else {
+                const dishObj = dishes.find(d => d.regionId === regionId);
+                label.innerText = dishObj ? dishObj.regionName : regionId;
+            }
+
+            renderDishes();
+        }
+
+        // Set Active Category
+        function setCategory(catId) {
+            selectedCategory = catId;
+            renderCategoryButtons();
+            renderDishes();
+        }
+
+        // Search Input Handler
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            renderDishes();
+        }
+
+        // Reset All Filters
+        function resetFilters() {
+            selectedRegion = 'all';
+            selectedCategory = 'all';
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            
+            document.querySelectorAll('.region-path').forEach(p => p.classList.remove('active'));
+            document.getElementById('selectedRegionLabel').innerText = 'Все районы';
+
+            renderCategoryButtons();
+            renderDishes();
+        }
+
+        // Filter and Render Dishes
+        function renderDishes() {
+            const container = document.getElementById('dishesList');
+            const emptyState = document.getElementById('emptyState');
+            const countLabel = document.getElementById('dishesCount');
+
+            const filtered = dishes.filter(dish => {
+                const matchRegion = selectedRegion === 'all' || dish.regionId === selectedRegion;
+                const matchCategory = selectedCategory === 'all' || dish.category === selectedCategory;
+                const matchSearch = searchQuery === '' || 
+                    dish.name.toLowerCase().includes(searchQuery) || 
+                    dish.shortDesc.toLowerCase().includes(searchQuery) ||
+                    dish.ingredients.some(i => i.toLowerCase().includes(searchQuery));
+
+                return matchRegion && matchCategory && matchSearch;
+            });
+
+            countLabel.innerText = `(${filtered.length})`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = filtered.map(dish => `
+                <div class="dish-card bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm flex flex-col sm:flex-row">
+                    <div class="sm:w-2/5 h-48 sm:h-auto relative bg-stone-100 overflow-hidden">
+                        <img src="${dish.img}" alt="${dish.name}" class="w-full h-full object-cover">
+                        <span class="absolute top-3 left-3 bg-brand-darkTeal/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-1 rounded-md">
+                            ${dish.regionName}
+                        </span>
+                    </div>
+                    <div class="p-5 sm:w-3/5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-serif font-bold text-lg text-stone-900 leading-snug">${dish.name}</h4>
+                            </div>
+                            <p class="text-stone-600 text-xs sm:text-sm line-clamp-2 mt-1 leading-relaxed">
+                                ${dish.shortDesc}
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+                            <div class="text-xs text-stone-400">
+                                <i class="fa-solid fa-fire text-brand-terracotta mr-1"></i> ${dish.kcal} ккал
+                            </div>
+                            <button onclick="openModal('${dish.id}')" class="text-xs font-semibold text-brand-darkTeal hover:text-brand-terracotta flex items-center gap-1 transition">
+                                <span>Рецепт и детали</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal Functionality
+        function openModal(dishId) {
+            const dish = dishes.find(d => d.id === dishId);
+            if (!dish) return;
+
+            document.getElementById('modalImg').src = dish.img;
+            document.getElementById('modalTitle').innerText = dish.name;
+            document.getElementById('modalRegion').querySelector('span').innerText = dish.regionName;
+            document.getElementById('modalCategory').innerText = categories.find(c => c.id === dish.category)?.label || 'Блюдо';
+            document.getElementById('modalDescription').innerText = dish.fullDesc;
+
+            // Nutrition
+            document.getElementById('modalKcal').innerText = dish.kcal;
+            document.getElementById('modalProteins').innerText = dish.proteins;
+            document.getElementById('modalFats').innerText = dish.fats;
+            document.getElementById('modalCarbs').innerText = dish.carbs;
+
+            // Ingredients
+            const ingList = document.getElementById('modalIngredients');
+            ingList.innerHTML = dish.ingredients.map(i => `
+                <li class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-brand-gold text-xs"></i>
+                    <span>${i}</span>
+                </li>
+            `).join('');
+
+            // Steps
+            const stepsList = document.getElementById('modalSteps');
+            stepsList.innerHTML = dish.steps.map(s => `
+                <li class="pl-1">${s}</li>
+            `).join('');
+
+            document.getElementById('dishModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('dishModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close Modal on Outside Click
+        document.getElementById('dishModal').addEventListener('click', (e) => {
+            if (e.target.id === 'dishModal') closeModal();
+        });
+    </script>
+</body>
+</html>
